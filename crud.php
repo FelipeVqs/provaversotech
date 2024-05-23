@@ -1,13 +1,14 @@
 <?php
-    
+class crud{
     // Create a method to get all users    
     function getAllUsers() {
         $connection = new Connection();
         // Query the database for all users
         $query = $connection->query("SELECT * FROM users");
-
+        #$result = $query->fetch(PDO::FETCH_ASSOC);
         // Return the results as an array
         return $query->fetchAll();
+
     }
     
     function getLastInsertId() {
@@ -20,25 +21,24 @@
     }
     
     function createUser($name, $email) {
-        // Prepare the SQL statement
+
+        // Validate user data (example)
+        if (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8) {
+          throw new Exception("Invalid user data");
+        }
+      
         $connection = new Connection();
-        $stmt = $connection->query('INSERT INTO users (name, email) VALUES (?, ?)');
-    
-        // Bind the parameters
+        $stmt = $connection->query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
         $stmt->bindParam(1, $name);
         $stmt->bindParam(2, $email);
-    
-        // Execute the statement
-        $stmt->execute();
-
-        if ($stmt) {
-            echo "User registered successfully.";
+      
+        if ($stmt->execute()) {
+          return true; // Registration successful
         } else {
-            echo "Error registering user.";
+          throw new Exception("Error registering user"); // Handle database error
         }
-        // Return the ID of the new user
-        return getLastInsertId();
-    }
+      }
+      
     
 
     // Create a method to get all colors
@@ -168,5 +168,6 @@
 
         // Execute the statement
         $stmt->execute();
+    }
     }
 ?>
