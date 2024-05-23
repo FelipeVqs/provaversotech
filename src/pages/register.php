@@ -1,3 +1,5 @@
+<?php
+  ?> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +10,7 @@
 <body>
   <h1>User Registration</h1>
 
-  <form action="saveUser.action.php" method="post">
+  <form action="../helpers/saveUser.action.php" method="POST">
     <fieldset>
       <legend>Registration Form</legend>
 

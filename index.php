@@ -1,9 +1,10 @@
 <?php
 
 require 'connection.php';
-require 'crud.php';
+require 'src\crud.php';
 
-$crud = new Crud();
+//fix connection instead of obj crud
+$crud = new Crud($connection);
 $users = $crud->getAllUsers();
 
 echo 
@@ -42,4 +43,4 @@ echo "</table>";
 ?>
 
 <br>
-<a href="../src/pages/register.php">Registrar Novo Usuário</a>
+<a href="src\pages\register.php">Registrar Novo Usuário</a>

@@ -1,5 +1,12 @@
 <?php
-class crud{
+  class crud {
+      private $db;
+  
+      public function __construct($db) {
+          $this->db = $db;
+      }
+  
+    
     // Create a method to get all users    
     function getAllUsers() {
         $connection = new Connection();
@@ -11,34 +18,29 @@ class crud{
 
     }
     
-    function getLastInsertId() {
-        $connection = new Connection();
-        // Assuming your database uses auto-increment IDs
-        // You can customize this query based on your database type
-        $stmt = $connection->query("SELECT LAST_INSERT_ID() as id");
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['id'];
-    }
     
-    function createUser($name, $email) {
+    function createUser($db, $name, $email) {
 
-        // Validate user data (example)
-        if (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8) {
-          throw new Exception("Invalid user data");
-        }
-      
-        $connection = new Connection();
-        $stmt = $connection->query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-        $stmt->bindParam(1, $name);
-        $stmt->bindParam(2, $email);
-      
-        if ($stmt->execute()) {
-          return true; // Registration successful
-        } else {
-          throw new Exception("Error registering user"); // Handle database error
+    
+        try {
+          // Prepare the SQL statement
+          $stmt = $db->query('INSERT INTO users (name, email) VALUES (?, ?)');
+    
+          // Bind the parameters
+          $stmt->bindParam(1, $name);
+          $stmt->bindParam(2, $email);
+    
+          // Execute the statement
+          $stmt->execute();
+    
+          return true; // Indicate successful creation (you can return the ID if needed)
+    
+        } catch(PDOException $e) {
+          // Handle database error
+          echo "Error creating user: " . $e->getMessage();
+          return false;
         }
       }
-      
     
 
     // Create a method to get all colors
@@ -61,25 +63,40 @@ class crud{
         return $query->fetchAll();
     }
 
-    // Create a method to create a new user
-    
-
-    // Create a method to create a new color
-    function createColor($name) {
-        // Prepare the SQL statement
+    function getLastInsertId() {
         $connection = new Connection();
-
-        $stmt = $connection->query('INSERT INTO colors (name) VALUES (?)');
-
-        // Bind the parameters
-        $stmt->bindParam(1, $name);
-
-        // Execute the statement
-        $stmt->execute();
-
-        // Return the ID of the new color
-        return getLastInsertId();
-    }
+        // Assuming your database uses auto-increment IDs
+        // You can customize this query based on your database type
+        $stmt = $connection->query("SELECT LAST_INSERT_ID() as id");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['id'];
+      }
+    
+      function createColor($name) {
+        $connection = new Connection();
+    
+        try {
+          // Prepare the SQL statement
+          $stmt = $connection->query('INSERT INTO colors (name) VALUES (?)');
+    
+          // Bind the parameters
+          $stmt->bindParam(1, $name);
+    
+          // Execute the statement
+          $stmt->execute();
+    
+          // Get the last inserted ID using the defined method
+          $lastId = $this->getLastInsertId();
+    
+          return $lastId; // Return the ID of the new color
+    
+        } catch(PDOException $e) {
+          // Handle database error
+          echo "Error creating color: " . $e->getMessage();
+          return false;
+        }
+      }
+    
 
     // Create a method to create a new user_color
     function createUserColor($user_id, $color_id) {
