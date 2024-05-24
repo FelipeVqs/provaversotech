@@ -1,6 +1,6 @@
 <?php
 
-
+echo getcwd();
 // Get user data from the form submission (assuming POST method)
 $name = isset($_POST['name']) ? $_POST['name'] : '';
 $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -21,7 +21,7 @@ try {
 
   if ($result) {
     // Registration successful - redirect to index page
-    redirect_to('../../index.php'); // Assuming redirect_to function is defined elsewhere 
+    redirect_to('index.php'); // Assuming redirect_to function is defined elsewhere 
     exit;
   } else {
     throw new Exception("Error registering user"); // Handle database error

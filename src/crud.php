@@ -1,30 +1,25 @@
 <?php
-  class crud {
-      private $db;
-  
-      public function __construct($db) {
-          $this->db = $db;
-      }
-  
-    
+class crud {
+  private $connection;
+
+  public function __construct(Connection $connection) {
+    $this->connection = $connection; // Use the globally created connection
+  }
     // Create a method to get all users    
     function getAllUsers() {
-        $connection = new Connection();
         // Query the database for all users
-        $query = $connection->query("SELECT * FROM users");
+        $query = $this->connection->query("SELECT * FROM users");
         #$result = $query->fetch(PDO::FETCH_ASSOC);
         // Return the results as an array
+        
         return $query->fetchAll();
 
     }
     
-    
-    function createUser($db, $name, $email) {
-
-    
+    function createUser($name, $email) {
         try {
           // Prepare the SQL statement
-          $stmt = $db->query('INSERT INTO users (name, email) VALUES (?, ?)');
+          $stmt = $this->connection->query('INSERT INTO users (name, email) VALUES (?, ?)');
     
           // Bind the parameters
           $stmt->bindParam(1, $name);
@@ -41,8 +36,9 @@
           return false;
         }
       }
-    
+    }
 
+/*
     // Create a method to get all colors
     function getAllColors() {
         $connection = new Connection();
@@ -187,4 +183,5 @@
         $stmt->execute();
     }
     }
+    */
 ?>

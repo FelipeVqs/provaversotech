@@ -1,10 +1,13 @@
 <?php
 
 require 'connection.php';
-require 'src\crud.php';
+require 'src/helpers/crud.php';
 
-//fix connection instead of obj crud
-$crud = new Crud($connection);
+// Create a new Connection object
+$connection = new Connection();
+
+// Inject the connection into the crud object
+$crud = new crud($connection);
 $users = $crud->getAllUsers();
 
 echo 
