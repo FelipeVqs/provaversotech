@@ -23,25 +23,31 @@ function getAllUsers() {
   $result = $stmt->fetchAll();
   return $result;
 }
-function createUser($name, $email) {
+ function createUser($name, $email) {
   try {
-    //$this->connection->query('INSERT INTO users name, email VALUES (felipe,felipe@felipe.com)');
-    $this->connection->query("INSERT INTO users name, email VALUES ($name, $email)");
-    // Consider returning the last inserted ID if needed
-    $lastId = $this->getLastInsertId();
-    return $lastId; // or return true;
+    // Prepare the SQL statement
+    $stmt = $this->connection->prepare('INSERT INTO users (name, email) VALUES (?, ?)');
+
+    // Bind the parameters
+    $stmt->bindParam(1, $name);
+    $stmt->bindParam(2, $email);
+
+    // Execute the statement
+    $stmt->execute();
+
+    // Return true on successful execution
+    return true;
 
   } catch (PDOException $e) {
     // Improved error handling
     error_log("Error creating user: " . $e->getMessage(), 3, "/path/to/error.log");
     return false;
   }
-}
     
   
 
     // Create a method to get all colors
-    public function getAllColors() {
+     function getAllColors() {
 
         // Query the database for all colors
         $query = $this->connection->query('SELECT * FROM colors');
@@ -179,8 +185,6 @@ function createUser($name, $email) {
 	/**
 	 * @return mixed
 	 */
-	public function getConnection() {
-		return $this->connection;
-	}
+  }
 }
   
