@@ -1,14 +1,19 @@
 <?php
 
-require 'connection.php';
-require 'src/helpers/crud.php';
+require_once 'connection.php';
+require_once 'src/crud.php';
 
-// Create a new Connection object
-$connection = new Connection();
+$crud = new crud(); // Create a crud object with the connection
 
-// Inject the connection into the crud object
-$crud = new crud($connection);
-$users = $crud->getAllUsers();
+$users = $crud->getAllUsers(); // Fetch all users
+
+if (isset($_GET['message'])) {
+  if ($_GET['message'] == 'success') {
+    echo 'User created successfully!';
+  } elseif ($_GET['message'] == 'fail') {
+    echo 'Failed to create user!';
+  }
+}
 
 echo 
   "<table border='1'>
@@ -21,7 +26,6 @@ echo
   ";
 
 foreach($users as $user) {
-
   // Check if 'name' property exists before accessing it
   if (isset($user->name)) {
     $name = $user->name;
@@ -30,15 +34,15 @@ foreach($users as $user) {
   }
 
   echo sprintf("<tr>
-        <td>%s</td>
-        <td>%s</td>
-        <td>%s</td>
-        <td>
-          <a href='#'>Editar</a>
-          <a href='#'>Excluir</a>
-        </td>
-      </tr>",
-      $user->id, $name, $user->email);
+      <td>%s</td>
+      <td>%s</td>
+      <td>%s</td>
+      <td>
+        <a href='#'>Editar</a>
+        <a href='#'>Excluir</a>
+      </td>
+    </tr>",
+    $user->id, $name, $user->email);
 }
 
 echo "</table>";
@@ -46,4 +50,4 @@ echo "</table>";
 ?>
 
 <br>
-<a href="src\pages\register.php">Registrar Novo Usuário</a>
+<a href="src/pages/register.php">Registrar Novo Usuário</a>

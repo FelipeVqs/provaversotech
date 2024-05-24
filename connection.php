@@ -21,12 +21,16 @@ class Connection {
         return $this->connection ?: $this->connection = $this->connect();
     }
 
-    public function query($query)
-    {
-        $result = $this->getConnection()->query($query);
-
-        $result->setFetchMode(PDO::FETCH_INTO, new stdClass);
-
-        return $result;
-    }
+    public function query($query) {
+        try {
+          $result = $this->getConnection()->query($query);
+          $result->setFetchMode(PDO::FETCH_INTO, new stdClass);
+          return $result;
+        } catch (PDOException $e) {
+          // Improved error handling
+          error_log("Error executing query: " . $e->getMessage(), 3, "/path/to/error.log");
+          return false; // Or throw an exception
+        }
+      }
+      
 }
