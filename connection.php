@@ -31,8 +31,7 @@ class Connection {
 
   public function prepare($query) {
     try {
-      $stmt = $this->getConnection()->prepare($query);
-      return $stmt;
+        return $this->getConnection()->prepare($query);
     } catch (PDOException $e) {
       // Improved error handling
       error_log("Error preparing statement: " . $e->getMessage(), 3, "/path/to/error.log");

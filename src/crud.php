@@ -1,50 +1,96 @@
 <?php
-
+include 'User.php';
 class crud {
-  private $connection;
+  var $connection;
 
   public function __construct()
   {
     $this->connection = new connection;
   }
-  
-  function getLastInsertId() {
 
-    // Assuming your database uses auto-increment IDs
-    // You can customize this query based on your database type
-    $stmt = $this->connection->query("SELECT LAST_INSERT_ID() as id");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result['id'];
-  }
+  function lastInsertId() {
+      return $this->connection->getConnection()->lastInsertId();
+      }
+
+
+
 
 
 function getAllUsers() {
-  $stmt = $this->connection->query("SELECT * FROM users");
-  $result = $stmt->fetchAll();
-  return $result;
+    return $this->connection->query("SELECT * FROM users");
 }
- function createUser($name, $email) {
-  try {
-    // Prepare the SQL statement
-    $stmt = $this->connection->prepare('INSERT INTO users (name, email) VALUES (?, ?)');
 
-    // Bind the parameters
-    $stmt->bindParam(1, $name);
-    $stmt->bindParam(2, $email);
 
-    // Execute the statement
-    $stmt->execute();
+    function getUserById($id)
+    {
+        // Cast ID to integer for safety
+        $id = (int) $id;
+        // Prepare SQL statement to select user and color information
+        $sql = "SELECT u.*, uc.color_id AS user_color,c.name as color_name
+FROM users u
+         LEFT JOIN user_colors uc ON u.id = uc.user_id
+        left join colors c on uc.color_id = c.id
+          WHERE u.id = :id";
 
-    // Return true on successful execution
-    return true;
+        try {
+            // Prepare the statement
+            $sql = "SELECT * FROM users WHERE id = :id";
+            $stmt = $this->connection->prepare($sql);
 
-  } catch (PDOException $e) {
-    // Improved error handling
-    error_log("Error creating user: " . $e->getMessage(), 3, "/path/to/error.log");
-    return false;
-  }
-    
-  
+            if ($stmt) { // Check if prepare was successful
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                // ... rest of your code
+            } else {
+                // Handle prepare statement error (e.g., log error)
+            }
+            // Bind the ID parameter
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            // Execute the statement
+            $stmt->execute();
+
+            // Fetch the user data as an associative array
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($userData) {
+                // Create a User object (adapt property names if needed)
+                return new User($userData['id'], $userData['name'], $userData['email']);
+            } else {
+                // User not found, return null or handle it differently
+                return null;
+            }
+        } catch (PDOException $e) {
+            // Handle database errors
+            echo "Error: " . $e->getMessage();
+            return null;
+        }
+    }
+
+    function createUser($name, $email) {
+        $conn = $this->connection->getConnection(); // Get the PDO connection
+
+        // Removed color parameter
+        $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
+        $stmt = $conn->prepare($sql); // Prepare the statement
+
+        try {
+            // Bind values to the prepared statement using named parameters
+            $stmt->bindParam(":name", $name, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+
+            $stmt->execute(); // Execute the prepared statement with bound values
+            return true; // User created successfully
+        } catch (PDOException $e) {
+            // Improved error handling
+            error_log("Error creating user: " . $e->getMessage(), 3, "/path/to/error.log");
+            return false; // Or throw an exception
+        }
+    }
+
+
+
+
+
 
     // Create a method to get all colors
      function getAllColors() {
@@ -53,67 +99,50 @@ function getAllUsers() {
         $query = $this->connection->query('SELECT * FROM colors');
 
         // Return the results as an array
-        return $query->fetchAll();
+        return $query;
     }
 
     // Create a method to get all user_colors
     function getAllUserColors() {
         // Query the database for all user_colors
+        $sql = "SELECT uc.*, c.name AS color_name FROM user_colors uc LEFT JOIN colors c ON uc.color_id = c.id";
 
-        $query = $this->connection->query('SELECT * FROM user_colors');
+        $query = $this->connection->query('SELECT uc.*, c.name AS color_name FROM user_colors uc LEFT JOIN colors c ON uc.color_id = c.id');
 
         // Return the results as an array
-        return $query->fetchAll();
+        return $query;
     }
 
- /*
-      function createColor($name) {
 
-    
-        try {
-          // Prepare the SQL statement
-          $stmt = $this->connection->query('INSERT INTO colors (name) VALUES (?)');
-    
-          // Bind the parameters
-          $stmt->bindParam(1, $name);
-    
-          // Execute the statement
-          $stmt->execute();
-    
-          // Get the last inserted ID using the defined method
-          $lastId = getLastInsertId();
-    
-          return $lastId; // Return the ID of the new color
-    
-        } catch(PDOException $e) {
-          // Handle database error
-          echo "Error creating color: " . $e->getMessage();
-          return false;
-        }
-      }
-    
-*/
+
     // Create a method to create a new user_color
-    function createUserColor($user_id, $color_id) {
+    function createUserColor($userId, $colorId) {
+        $conn = $this->connection->getConnection(); // Get the PDO connection object
+        if (!$conn) {
+            // Handle connection error (log or throw exception)
+            return false;
+        }
+
+        if (!$userId) { // Check if user ID is provided
+            // Handle error (log or throw exception)
+            return false;
+        }
+        $sql = "INSERT INTO user_colors (user_id, color_id) VALUES (:user_id, :color_id)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':color_id', $colorId, PDO::PARAM_INT);
+        return $stmt->execute();
 
 
-        // Prepare the SQL statement
-        $stmt = $this->connection->query('INSERT INTO user_colors (user_id, color_id) VALUES (?, ?)');
-
-        // Bind the parameters
-        $stmt->bindParam(1, $user_id);
-        $stmt->bindParam(2, $color_id);
-
-        // Execute the statement
-        $stmt->execute();
     }
+
 
     // Create a method to update a user
     function updateUser($id, $name, $email) {
 
 
         // Prepare the SQL statement
-        $stmt = $this->connection->query('UPDATE users SET name = ?, email = ? WHERE id = ?');
+        $stmt = $this->connection->query('UPDATE users SET name = ?, email =? WHERE id = ?');
 
         // Bind the parameters
         $stmt->bindParam(1, $name);
@@ -181,10 +210,6 @@ function getAllUsers() {
         // Execute the statement
         $stmt->execute();
     }
-  
-	/**
-	 * @return mixed
-	 */
-  }
+
 }
   
