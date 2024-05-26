@@ -104,4 +104,4 @@ $frmUser .= <<<HTML
 HTML;
 
 echo $frmUser;
-?>
+

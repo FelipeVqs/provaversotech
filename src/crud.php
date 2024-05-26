@@ -1,30 +1,31 @@
 <?php
 include 'User.php';
-class crud {
-  var $connection;
 
-  public function __construct()
-  {
-    $this->connection = new connection;
-  }
+class crud
+{
+    var $connection;
 
-  function lastInsertId() {
-      return $this->connection->getConnection()->lastInsertId();
-      }
+    public function __construct()
+    {
+        $this->connection = new connection;
+    }
+
+    function lastInsertId()
+    {
+        return $this->connection->getConnection()->lastInsertId();
+    }
 
 
-
-
-
-function getAllUsers() {
-    return $this->connection->query("SELECT * FROM users");
-}
+    function getAllUsers()
+    {
+        return $this->connection->query("SELECT * FROM users");
+    }
 
 
     function getUserById($id)
     {
         // Cast ID to integer for safety
-        $id = (int) $id;
+        $id = (int)$id;
         // Prepare SQL statement to select user and color information
         $sql = "SELECT u.*, uc.color_id AS user_color,c.name as color_name
 FROM users u
@@ -40,8 +41,6 @@ FROM users u
             if ($stmt) { // Check if prepare was successful
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                 // ... rest of your code
-            } else {
-                // Handle prepare statement error (e.g., log error)
             }
             // Bind the ID parameter
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -66,7 +65,8 @@ FROM users u
         }
     }
 
-    function createUser($name, $email) {
+    function createUser($name, $email)
+    {
         $conn = $this->connection->getConnection(); // Get the PDO connection
 
         // Removed color parameter
@@ -75,8 +75,8 @@ FROM users u
 
         try {
             // Bind values to the prepared statement using named parameters
-            $stmt->bindParam(":name", $name, PDO::PARAM_STR);
-            $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":email", $email);
 
             $stmt->execute(); // Execute the prepared statement with bound values
             return true; // User created successfully
@@ -88,35 +88,29 @@ FROM users u
     }
 
 
-
-
-
-
     // Create a method to get all colors
-     function getAllColors() {
+    function getAllColors()
+    {
 
         // Query the database for all colors
-        $query = $this->connection->query('SELECT * FROM colors');
-
         // Return the results as an array
-        return $query;
+        return $this->connection->query('SELECT * FROM colors');
     }
 
     // Create a method to get all user_colors
-    function getAllUserColors() {
+    function getAllUserColors()
+    {
         // Query the database for all user_colors
         $sql = "SELECT uc.*, c.name AS color_name FROM user_colors uc LEFT JOIN colors c ON uc.color_id = c.id";
 
-        $query = $this->connection->query('SELECT uc.*, c.name AS color_name FROM user_colors uc LEFT JOIN colors c ON uc.color_id = c.id');
-
         // Return the results as an array
-        return $query;
+        return $this->connection->query('SELECT uc.*, c.name AS color_name FROM user_colors uc LEFT JOIN colors c ON uc.color_id = c.id');
     }
 
 
-
     // Create a method to create a new user_color
-    function createUserColor($userId, $colorId) {
+    function createUserColor($userId, $colorId)
+    {
         $conn = $this->connection->getConnection(); // Get the PDO connection object
         if (!$conn) {
             // Handle connection error (log or throw exception)
@@ -138,7 +132,8 @@ FROM users u
 
 
     // Create a method to update a user
-    function updateUser($id, $name, $email) {
+    function updateUser($id, $name, $email)
+    {
 
 
         // Prepare the SQL statement
@@ -154,7 +149,8 @@ FROM users u
     }
 
     // Create a method to update a color
-    function updateColor($id, $name) {
+    function updateColor($id, $name)
+    {
 
 
         // Prepare the SQL statement
@@ -169,7 +165,8 @@ FROM users u
     }
 
     // Create a method to delete a user
-    function deleteUser($id) {
+    function deleteUser($id)
+    {
 
 
         // Prepare the SQL statement
@@ -183,7 +180,8 @@ FROM users u
     }
 
     // Create a method to delete a color
-    function deleteColor($id) {
+    function deleteColor($id)
+    {
 
 
         // Prepare the SQL statement
@@ -197,7 +195,8 @@ FROM users u
     }
 
     // Create a method to delete a user_color
-    function deleteUserColor($user_id, $color_id) {
+    function deleteUserColor($user_id, $color_id)
+    {
 
 
         // Prepare the SQL statement

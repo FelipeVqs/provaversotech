@@ -1,6 +1,6 @@
 <?php
     //The redirect_with_message function uses the undefined constant FLASH_SUCCESS (23/05) - revisar
-    define('FLASH_SUCCESS', 'success'); 
+const FLASH_SUCCESS = 'success';
 /**
  * Display a view
  *

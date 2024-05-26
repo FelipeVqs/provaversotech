@@ -8,7 +8,7 @@ $colors = $crud->getAllColors();
 
 // Check if the form was submitted and ID is present
 if (isset($_POST['id'])) {
-    $id = (int) $_POST['id']; // Cast to integer for safety
+    $id = (int)$_POST['id']; // Cast to integer for safety
 
     $user = $crud->getUserById($id); // Fetch user by ID
 
@@ -44,7 +44,8 @@ if (isset($_POST['id'])) {
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Lista de Usuários</title>
-    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css' rel='stylesheet'
+          integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
 </head>
 <body>
 
@@ -52,26 +53,27 @@ if (isset($_POST['id'])) {
     <p><?php echo $message; ?></p>
 <?php endif; ?>
 
-<?php if ($user) : // Only display form if user exists ?>
-    <h1>Editar Usuário (ID: <?php echo $user->id; ?>)</h1>
-    <form action="" method="post">
-        <input type="hidden" name="id" value="<?php echo $user->id; ?>">
-        <label for="name">Nome:</label>
-        <input type="text" id="name" name="name" value="<?php echo $user->name; ?>">
-        <br>
-        <label for="email">E-mail:</label>
-        <input type="text" id="email" name="email" value="<?php echo $user->email; ?>">
-        <br>
+<?php if ($user) : // Only display form if user exists   ?>
+<h1>Editar Usuário (ID: <?php echo $user->id; ?>)</h1>
+<form action="" method="post">
+    <input type="hidden" name="id" value="<?php echo $user->id; ?>">
+    <label for="name">Nome:</label>
+    <input type="text" id="name" name="name" value="<?php echo $user->name; ?>">
+    <br>
+    <label for="email">E-mail:</label>
+    <input type="text" id="email" name="email" value="<?php echo $user->email; ?>">
+    <br>
 
-        <label for="user_color">
-            Cor:
-            <select name="user_color" id="user_color">  <option value="<?php echo $user->color_name; ?>">Selecione uma cor</option>
-                <?php foreach ($colors as $color) {
+    <label for="user_color">
+        Cor:
+        <select name="user_color" id="user_color">
+            <option value="<?php echo $user->color_name; ?>">Selecione uma cor</option>
+            <?php foreach ($colors as $color) {
                 $frmUser .= "<option value=\"$color->name\">$color->name</option>";
-                }
+            }
 
 
-                $frmUser .= <<<HTML
+            $frmUser .= <<<HTML
             </select>
         </label>
 
@@ -89,5 +91,6 @@ if (isset($_POST['id'])) {
     HTML;
 
 
-echo $frmUser; endif; ?>
+            echo $frmUser;
+            endif; ?>
 

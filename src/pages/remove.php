@@ -7,7 +7,7 @@ $crud = new crud();
 
 // Check if the form was submitted and ID is present
 if (isset($_POST['id'])) {
-    $id = (int) $_POST['id']; // Cast to integer for safety
+    $id = (int)$_POST['id']; // Cast to integer for safety
 
     // Use the ID to delete the user
     $crud->deleteUser($id);
@@ -20,4 +20,4 @@ if (isset($_POST['id'])) {
     echo 'Error: No user ID provided.';
 }
 
-?>
+
